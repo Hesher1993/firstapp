@@ -1,6 +1,7 @@
 package ru.geekbrains.hesher.servlet;
 
 
+
 public class Product {
     private long id;
     private String title;
