@@ -1,50 +1,16 @@
 package ru.geekbrains.hesher.servlet;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 public class Product {
-    private long id;
+    private Long id;
     private String title;
     private int cost;
-
-    public Product() {
-    }
-
-    public Product(long id, String title, int cost) {
-        this.id = id;
-        this.title = title;
-        this.cost = cost;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
-
-    @Override
-    public String toString() {
-        return "Product " +
-                "индекс =" + id +
-                ", название ='" + title + '\'' +
-                ", цена =" + cost
-                ;
-    }
 }
