@@ -1,57 +1,44 @@
 package ru.geekbrains.hesher.servlet;
 
-import ru.geekbrains.hesher.servlet.ResourceNotFoundException;
-import ru.geekbrains.hesher.servlet.Product;
-import ru.geekbrains.hesher.servlet.ProductService;
-import org.apache.catalina.connector.Response;
-import org.springframework.http.HttpHeaders;
+import ru.geekbrains.hesher.servlet.mvc.model.Product;
+import ru.geekbrains.hesher.servlet.mvc.services.ProductService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
-
 @Controller
 @RequestMapping("/products")
-@RequiredArgsConstructor
 public class ProductController {
-    private final ProductService productService;
+    private ProductService productService;
 
-    @GetMapping // GET http://localhost:8189/app/products
-    public String showAll(Model model,
-                          @RequestParam(required = false, name = "minCost") Integer minCost,
-                          @RequestParam(required = false, name = "maxCost") Integer maxCost
-    ) {
-        model.addAttribute("products", productService.findAll(minCost, maxCost));
-        return "products";
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteProductById(@PathVariable Long id, HttpServletResponse response) {
+    @GetMapping("/all")
+    public String getAllProducts(Model model) {
+        model.addAttribute("frontProducts", productService.getAllProducts());
+        return "all_products";
+    }
+
+    @GetMapping("/remove/{id}")
+    public String deleteBoxById(@PathVariable Long id) {
         productService.deleteById(id);
-        return "redirect:/products"; // [http://localhost:8189/app]/products
+        return "redirect:/products/all";
     }
 
-    @GetMapping("/select")
-    public String selectProductById(Model model, @RequestParam (required = false, name = "id") Long id, HttpServletResponse response) throws ResourceNotFoundException {
-        final Optional<Product> product = productService.findById(id);
-        if (product.isEmpty()) {
-            throw new ResourceNotFoundException(id.toString());
-        }
-        model.addAttribute("product", product.get());
-        return "viewProduct"; // [http://localhost:8189/app]/products
+    @PostMapping("/add")
+    public String addNewProduct(@ModelAttribute Product product) {
+        productService.save(product);
+        return "redirect:/products/all";
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public String handleException(Model model, ResourceNotFoundException e) {
-        model.addAttribute("id", e.getMessage());
-        return "productNotFound";
-
+    @PostMapping("/json/add")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addNewJsonProduct(@RequestBody Product product) {
+        productService.save(product);
     }
 
 
