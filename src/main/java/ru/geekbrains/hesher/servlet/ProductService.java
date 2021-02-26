@@ -3,30 +3,46 @@ package ru.geekbrains.hesher.servlet;
 
 import ru.geekbrains.hesher.servlet.mvc.model.Product;
 import ru.geekbrains.hesher.servlet.mvc.model.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ProductService {
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    public void setBoxRepository(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public Product saveOrUpdate(Product p) {
+        return productRepository.saveOrUpdate(p);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.getAllProducts();
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
-    public void save(Product product) {
-        productRepository.save(product);
+    public List<Product> findAll(Double minCost, Double maxCost) {
+        List<Product> out = findAll();
+        if(minCost != null){
+            out = out.stream().filter(p -> p.getCost() >= minCost).collect(Collectors.toList());
+        }
+        if(maxCost != null){
+            out = out.stream().filter(p -> p.getCost() <= maxCost).collect(Collectors.toList());
+        }
+        return out;
     }
 
-    public void deleteById(Long id) {
+    public Optional<Product> findById(Long id){
+        return productRepository.findById(id);
+    }
+
+    public void deleteById(Long id){
         productRepository.deleteById(id);
+    }
+
+    public void add(Product p){
+        productRepository.add(p);
     }
 }

@@ -8,38 +8,30 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.servlet.http.HttpServletResponse;
+
 @Controller
 @RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProductController {
-    private ProductService productService;
+    private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    @GetMapping
+    public String showAll(Model model,
+                          @RequestParam(required = false, name = "min_cost") Double minCost, @RequestParam(required = false, name = "max_cost") Double maxCost){
+        model.addAttribute("products", productService.findAll(minCost, maxCost));
+        return "products";
     }
 
-    @GetMapping("/all")
-    public String getAllProducts(Model model) {
-        model.addAttribute("frontProducts", productService.getAllProducts());
-        return "all_products";
-    }
-
-    @GetMapping("/remove/{id}")
-    public String deleteBoxById(@PathVariable Long id) {
+    @GetMapping("/delete/{id}")
+    public String deleteById(@PathVariable Long id){
         productService.deleteById(id);
-        return "redirect:/products/all";
+        return "redirect:products";
     }
 
     @PostMapping("/add")
-    public String addNewProduct(@ModelAttribute Product product) {
-        productService.save(product);
-        return "redirect:/products/all";
+    public String add(@ModelAttribute Product p){
+        productService.add(p);
+        return "redirect:/products";
     }
-
-    @PostMapping("/json/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addNewJsonProduct(@RequestBody Product product) {
-        productService.save(product);
-    }
-
-
 }
