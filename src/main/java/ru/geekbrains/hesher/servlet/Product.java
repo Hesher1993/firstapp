@@ -1,17 +1,14 @@
 package ru.geekbrains.hesher.servlet;
 
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
 public class Product {
     private Long id;
     private String title;
-    private int cost;
+    private Double cost;
 }
