@@ -3,6 +3,7 @@ package ru.geekbrains.hesher.servlet;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+
 @Entity
 @Table(name="orders")
 public class Order {
