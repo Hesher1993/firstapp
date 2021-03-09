@@ -1,66 +1,25 @@
 package ru.geekbrains.hesher.servlet;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+
+import javax.persistence.*;
+
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "products")
 public class Product {
-import javax.persistence .*;
-import java.io.Serializable;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private long id;
 
-    @Entity
-    @Table(name = "product")
-    public class Product implements Serializable {
+    @Column
+    private String title;
 
-        private static final long serialVersionUID = -397775056591704824L;
-
-        @Id
-        @Column(name = "id")
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-
-        @Column(name = "title")
-        private String title;
-
-        @Column(name = "price")
-        private Integer price;
-
-        public Product() {
-        }
-
-        public Product(String title, Integer price) {
-            this.title = title;
-            this.price = price;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public Integer getPrice() {
-            return price;
-        }
-
-        public void setPrice(Integer price) {
-            this.price = price;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder("Product{");
-            sb.append("id=").append(id);
-            sb.append(", title='").append(title).append('\'');
-            sb.append(", price=").append(price);
-            sb.append('}');
-            return sb.toString();
-        }
-    }
+    @Column
+    private double cost;
 }
