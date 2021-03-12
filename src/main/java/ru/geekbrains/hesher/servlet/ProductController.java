@@ -1,37 +1,38 @@
 package ru.geekbrains.hesher.servlet;
 
-import ru.geekbrains.hesher.servlet.mvc.model.Product;
-import ru.geekbrains.hesher.servlet.mvc.services.ProductService;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.geekbrains.spring.university.model.Product;
+import ru.geekbrains.spring.university.services.ProductService;
+
+import java.util.List;
 
 
-import javax.servlet.http.HttpServletResponse;
-
-@Controller
+@RestController
 @RequestMapping("/products")
-@RequiredArgsConstructor
 public class ProductController {
-    private final ProductService productService;
+
+    @Autowired
+    private ProductService productService;
 
     @GetMapping
-    public String showAll(Model model,
-                          @RequestParam(required = false, name = "min_cost") Double minCost, @RequestParam(required = false, name = "max_cost") Double maxCost){
-        model.addAttribute("products", productService.findAll(minCost, maxCost));
-        return "products";
-    }
+    public List<Product> getAllByCostBetween(@RequestParam(required = false, name = "minCost") Double minCost,
+                                             @RequestParam(required = false, name = "maxCost") Double maxCost)
+    { if (minCost==null && maxCost == null) {return productService.getAll();}
+        if (minCost==null) {return productService.getAllByCostLessThan(maxCost);}
+        if (maxCost==null) {return productService.getAllByCostGreaterThan(minCost);}
+
+        return productService.getAllByCostBetween(minCost, maxCost);}
+
+    @GetMapping("/id:{id}")
+    public Product getById(@PathVariable long id){return productService.getById(id);}
+
+    @GetMapping("/title:{title}")
+    public List<Product> getProductByTitleContains(@PathVariable String title){return productService.getAllByTitleContains(title);}
+
+    @PostMapping
+    public Product save(@RequestBody Product product){return productService.save(product);}
 
     @GetMapping("/delete/{id}")
-    public String deleteById(@PathVariable Long id){
-        productService.deleteById(id);
-        return "redirect:products";
-    }
-
-    @PostMapping("/add")
-    public String add(@ModelAttribute Product p){
-        productService.add(p);
-        return "redirect:/products";
-    }
+    public void deleteById(@PathVariable long id){productService.deleteById(id);}
 }

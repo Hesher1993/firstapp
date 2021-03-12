@@ -1,48 +1,29 @@
 package ru.geekbrains.hesher.servlet;
 
 
-import ru.geekbrains.hesher.servlet.mvc.model.Product;
-import ru.geekbrains.hesher.servlet.mvc.model.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.geekbrains.spring.university.model.Product;
+import ru.geekbrains.spring.university.repository.ProductRepository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ProductService {
-    private final ProductRepository productRepository;
 
-    public Product saveOrUpdate(Product p) {
-        return productRepository.saveOrUpdate(p);
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
-    public List<Product> findAll() {
-        return productRepository.findAll();
-    }
+    public List<Product> getAll() {return productRepository.findAll();}
+    public List<Product> getAllByCostGreaterThan(double minCost){return productRepository.findAllByCostGreaterThan(minCost);}
+    public List<Product> getAllByCostLessThan(double maxCost){return productRepository.findAllByCostLessThan(maxCost);}
+    public List<Product> getAllByCostBetween(double minCost, double maxCost){return productRepository.findAllByCostBetween(minCost, maxCost);}
 
-    public List<Product> findAll(Double minCost, Double maxCost) {
-        List<Product> out = findAll();
-        if(minCost != null){
-            out = out.stream().filter(p -> p.getCost() >= minCost).collect(Collectors.toList());
-        }
-        if(maxCost != null){
-            out = out.stream().filter(p -> p.getCost() <= maxCost).collect(Collectors.toList());
-        }
-        return out;
-    }
+    public List<Product> getAllByTitleContains(String title){return productRepository.findAllByTitleContains(title);}
 
-    public Optional<Product> findById(Long id){
-        return productRepository.findById(id);
-    }
+    public Product getById(long id){return productRepository.getOne(id);}
 
-    public void deleteById(Long id){
-        productRepository.deleteById(id);
-    }
+    public Product save(Product product){return productRepository.save(product);}
 
-    public void add(Product p){
-        productRepository.add(p);
-    }
+    public void deleteById(long id){productRepository.deleteById(id);}
 }
