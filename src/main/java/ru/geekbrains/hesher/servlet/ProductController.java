@@ -1,38 +1,60 @@
 package ru.geekbrains.hesher.servlet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import ru.geekbrains.spring.university.model.Product;
-import ru.geekbrains.spring.university.services.ProductService;
-
+import ru.geekbrains.spring.lesson7h.model.Product;
+import ru.geekbrains.spring.lesson7h.services.ProductService;
 import java.util.List;
-
-
+import java.util.Optional;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-
     @Autowired
     private ProductService productService;
 
+//    @GetMapping
+//    public List<Product> getAll(
+//            @RequestParam(defaultValue = "1") Integer page,
+//            @RequestParam(defaultValue = "10") Integer size,
+//            @RequestParam SortOrder sortCost,
+//            @RequestParam SortOrder sortTitle) {
+//        return productService.getAll(page - 1, size, Optional.of(sortCost), Optional.of(sortTitle));
+//    }
+
     @GetMapping
-    public List<Product> getAllByCostBetween(@RequestParam(required = false, name = "minCost") Double minCost,
-                                             @RequestParam(required = false, name = "maxCost") Double maxCost)
-    { if (minCost==null && maxCost == null) {return productService.getAll();}
-        if (minCost==null) {return productService.getAllByCostLessThan(maxCost);}
-        if (maxCost==null) {return productService.getAllByCostGreaterThan(minCost);}
+        public List<Product> getAll(
+                @RequestParam(defaultValue = "1") Integer page,
+                @RequestParam(defaultValue = "10") Integer size,
+                @RequestParam(value = "sort") String[] sort) {
+            return productService.getAll(page - 1, size, Optional.of(sort));
+        }
 
-        return productService.getAllByCostBetween(minCost, maxCost);}
+        @GetMapping("/bycost")
+        public List<Product> getAll(
+                @RequestParam Optional<Long> minCost,
+                @RequestParam Optional<Long> maxCost) {
+            return productService.getAllByCost(minCost, maxCost);
+        }
 
-    @GetMapping("/id:{id}")
-    public Product getById(@PathVariable long id){return productService.getById(id);}
-
-    @GetMapping("/title:{title}")
-    public List<Product> getProductByTitleContains(@PathVariable String title){return productService.getAllByTitleContains(title);}
-
-    @PostMapping
-    public Product save(@RequestBody Product product){return productService.save(product);}
-
-    @GetMapping("/delete/{id}")
-    public void deleteById(@PathVariable long id){productService.deleteById(id);}
-}
+        @GetMapping("/find")
+        public List<Product> getAll(@RequestParam Optional<String> titlePart) {
+            return productService.getAllByNamePart(titlePart);
+        }
+        @GetMapping("/{id}")
+        public Product getById(@PathVariable Long id) {
+            return productService.getById(id);
+        }
+        @GetMapping("/title")
+        public Product getByName(@RequestParam String title) {
+            return productService.getByTitle(title);
+        }
+        @PostMapping
+        public Product add(@RequestBody Product product) {
+            return productService.add(product);
+        }
+        @DeleteMapping("/{id}")
+        public void delete(@PathVariable Long id) {
+            productService.delete(id);
+        }
+    }
