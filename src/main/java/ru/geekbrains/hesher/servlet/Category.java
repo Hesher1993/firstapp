@@ -7,12 +7,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "product")
+@Table(name = "category")
 @Data
 @NoArgsConstructor
-public class Product {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -21,8 +22,8 @@ public class Product {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "cost")
-    private Long cost;
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
 
     @Column(name = "created_at")
     @CreationTimestamp
@@ -35,12 +36,7 @@ public class Product {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    public Product(String title, Long cost) {
+    public Category(String title) {
         this.title = title;
-        this.cost = cost;
     }
 }
