@@ -1,48 +1,63 @@
 package ru.geekbrains.hesher.servlet;
 
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Entity
 @Table(name = "buyers")
 public class Buyer {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private long id;
 
     @Column(name = "name")
     private String name;
 
-    public Buyer() {
-    }
+    @Column(name = "session_id")
+    private String sessionId;
 
-    public Buyer(String name) {
-        this.name = name;
-    }
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    @OneToMany(mappedBy = "buyer")
+    private List<Order> orders;
 
     @Override
     public String toString() {
-        return "Buyer{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return String.format("Buyer: [%d %s]", id, name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Buyer customer = (Buyer) o;
+        return id == Buyer.id && Objects.equals(name, Buyer.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    public Buyer(String name, User user) {
+        if (name.equals(""))
+            this.name = user.getLogin();
+        else this.name = name;
+        this.user = user;
+        this.orders = new ArrayList<>();
     }
 }

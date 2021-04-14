@@ -31,7 +31,6 @@ public class Order {
         this.item = item;
         this.price = price;
     }
-
     public Long getId() {
         return id;
     }

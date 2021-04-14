@@ -21,3 +21,4 @@ public class ProductDto implements Serializable {
         this.category = product.getCategory().getTitle();
     }
 }
+
